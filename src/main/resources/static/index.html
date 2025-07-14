@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JOLT Transformer</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        textarea {
+            width: 100%;
+            height: calc(100% - 40px);
+            box-sizing: border-box;
+            font-family: monospace;
+            padding: 10px;
+            resize: none;
+        }
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        button {
+            height: 30px;
+            margin: 5px 0;
+        }
+        h3 {
+            margin: 0 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="column">
+    <h3>Input JSON</h3>
+    <textarea id="jsonInput">
+        { "rating": { "primary": 3 } }
+    </textarea>
+</div>
+<div class="column">
+    <h3 title="Using libraries com.bazaarvoice.jolt:jolt-core:0.1.8 and com.bazaarvoice.jolt:json-utils:0.1.8">JOLT Spec</h3>
+    <textarea id="joltSpec">
+        [ { "operation": "shift", "spec": { "rating": { "primary": "score" } } } ]
+    </textarea>
+    <button onclick="send()">Transform</button>
+</div>
+<div class="column">
+    <h3>Response</h3>
+    <textarea id="output" readonly></textarea>
+</div>
+
+<script>
+    function isValidJson(str) {
+        try {
+            JSON.parse(str);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function send() {
+        const inputJson = document.getElementById("jsonInput").value;
+        const joltSpec = document.getElementById("joltSpec").value;
+        const output = document.getElementById("output");
+
+        // Validate input JSON
+        if (!isValidJson(inputJson)) {
+            output.value = "❌ Invalid JSON in the 'Input JSON' field.";
+            return;
+        }
+
+        // Validate JOLT spec
+        if (!isValidJson(joltSpec)) {
+            output.value = "❌ Invalid JSON in the 'JOLT Spec' field.";
+            return;
+        }
+
+        const formData = new URLSearchParams();
+        formData.append("inputJson", inputJson);
+        formData.append("joltSpec", joltSpec);
+
+        fetch("/transform", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(data => {
+                output.value = JSON.stringify(data, null, 2);
+            })
+            .catch(err => {
+                output.value = "❌ Error while transforming: " + err;
+            });
+    }
+</script>
+
+</body>
+</html>
