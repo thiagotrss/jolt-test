@@ -8,7 +8,7 @@ A simple project to test your jolt transformation online
 - [@thiagotrss](https://www.github.com/thiagotrss)
 
 
-## Using docker image from dockerhun
+## Using docker image from dockerhub
 
 The project has two images available on docker hub to be used: for architecture arm64 (built on macos M1) and amd64 (built on linux).
 You can use one of them to execute the image running the command below:
