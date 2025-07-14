@@ -8,10 +8,18 @@ A simple project to test your jolt transformation online
 - [@thiagotrss](https://www.github.com/thiagotrss)
 
 
+## Using docker image from dockerhun
+
+The project has two images available on docker hub to be used: for architecture arm64 (built on macos M1) and amd64 (built on linux).
+You can use one of them to execute the image running the command below:
+
+```bash
+docker run -p 7080:8080 --name jolt-transformation --restart unless-stopped thiagotrss/jolt-transformer:v1-amd64
+```
+
 ## Using docker to run
 
-The project already has a Dockerfile.
-You just need to execute the 3 commands below in order to have it up and running
+If you want to change something on project and build your own image without use docker hub, follow the steps below:
 
 Cloning the project
 
